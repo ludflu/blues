@@ -1,21 +1,28 @@
 
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE DataKinds #-}
-{-# LANGUAGE ExplicitNamespaces #-}
 {-# LANGUAGE TypeOperators #-}
 
 module Scales where
 
 
-import Data.Modular (ℤ, type (/), unMod, toMod)
+import Data.Modular ( ℤ, type (/), unMod, toMod, ℤ, toMod )
 
-import Euterpea (Music, Pitch, wn, Primitive(Note), PitchClass, Music(Prim), shiftPitches, chord, absPitch, pitch, note)
-
-import Euterpea (PitchClass(C, Cs, D, E, F, G, A, B))
+import Euterpea
+    ( Music,
+      Pitch,
+      wn,
+      Primitive(Note),
+      PitchClass,
+      Music(Prim),
+      shiftPitches,
+      chord,
+      absPitch,
+      pitch,
+      note,
+      PitchClass(C, Cs, D, E, F, G, A, B) )
 
 import qualified Data.Set as Set
-
-import Data.Modular (ℤ, toMod)
 
 data Mood = Major | Minor deriving Show
 
@@ -29,6 +36,7 @@ newtype ScaleFamily = ScaleFamily [Interval] deriving Show
 newtype Progression = Progression [(Degree,Mood)] deriving Show
 
 type Interval = ℤ / 12
+--type Interval = Integer
 
 whole :: Interval
 whole = 2
@@ -45,7 +53,7 @@ moodToPattern Minor = minor
 majorPentatonic= ScaleFamily [whole, whole, minorThird, whole, majorThird]
 minorPentatonic= ScaleFamily [minorThird, whole, whole, minorThird, whole]
 
-minorBlues = ScaleFamily [ minorThird, whole, half, half, minorThird]
+minorBlues = ScaleFamily [ minorThird, whole, half, half, minorThird, whole]
 
 ionian =     ScaleFamily [whole, whole, half, whole, whole, whole, half]
 dorian =     ScaleFamily [whole, half, whole, whole, whole, half, whole]
@@ -108,7 +116,9 @@ octave  = 12
 -- is that the right thing to do?
 perfection :: Set.Set Interval
 perfection = Set.fromList [unison, octave, perfectFifth]
+dissonantIntervals :: Set.Set Interval
 dissonantIntervals = Set.fromList [minorSecond, majorSecond, tritone, minorSeventh, majorSeventh]
+consonantIntervals :: Set.Set Interval
 consonantIntervals = Set.fromList [ unison, minorThird, majorThird, perfectFourth, perfectFifth, minorSixth, majorSixth, octave]
 
 patternToSemitones :: [Interval] -> [Interval]
@@ -127,11 +137,12 @@ makeScale (ScaleFamily ptn) p d = let f ap = note d (pitch (absPitch p + ap))
                                       integerSemitones = map modToInt semis
                                    in map f integerSemitones
 
+-- endlessly repeat the scale raising the octave each time
 repeatOctave :: [Music Pitch] ->  [Music Pitch]
 repeatOctave musiclist = let octaves = [0,12..]
                              shiftTargets = map (replicate (length musiclist) ) octaves
                              shifters = map shiftPitches $ concat shiftTargets
-                          in zipWith ($) shifters musiclist
+                          in zipWith ($) shifters $ cycle musiclist
 
 makeMajorScale :: Pitch -> Rational -> [Music Pitch]
 makeMajorScale = makeScale major

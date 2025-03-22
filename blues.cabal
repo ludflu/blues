@@ -73,6 +73,7 @@ executable blues
                       ,modular-arithmetic
                       ,containers
                       ,split
+                      ,lilypond
                     
     -- Directories containing source files.
     hs-source-dirs:   app

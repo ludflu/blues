@@ -11,12 +11,12 @@ melody = [
 
 
 allblues :: [Music Pitch]
-allblues = repeatOctave (dblues qn)
+allblues = repeatOctave (dblues en)
 
 front :: [Music Pitch]
-front = take 8 allblues
+front = take 7 allblues
 back :: [Music Pitch]
-back =  reverse   front
+back =  reverse  front
 
 frontAndBack :: Music Pitch
 frontAndBack = line $ front ++ drop 1 back
