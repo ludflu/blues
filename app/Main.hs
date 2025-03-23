@@ -1,13 +1,8 @@
 module Main where
 
-import Euterpea
-import Scales
-melody = [
-     d 5 hn, a 5 hn ,
-     a 5 hn, d 5 qn, b 5 qn,
-     b 5 hn, a 5 hn,
-     g 5 hn, b 5 qn, d 5 qn]  --D A B G
-
+import Euterpea ( Pitch, Music, en, line, play )
+import Scales ( repeatOctave, dblues )
+import EuterpeaToLilyPond ( exportToLily )
 
 
 allblues :: [Music Pitch]
@@ -21,7 +16,10 @@ back =  reverse  front
 frontAndBack :: Music Pitch
 frontAndBack = line $ front ++ drop 1 back
 
+
 main :: IO ()
-main = do print frontAndBack
-          play frontAndBack
+main = do
+--   print frontAndBack
+--   play frontAndBack
+  exportToLily frontAndBack "output.llp"
 
