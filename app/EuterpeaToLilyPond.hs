@@ -1,7 +1,9 @@
-module EuterpeaToLilyPond (convertToLilyPond) where
+module EuterpeaToLilyPond (convertToLilyPond,exportToLily) where
 
 import Euterpea qualified as E
 import Music.Lilypond qualified as LP
+import Text.Pretty
+
 
 -- | Converts Euterpea Music data to LilyPond Music data
 convertToLilyPond :: E.Music E.Pitch -> LP.Music
@@ -122,6 +124,10 @@ pitchToLilyPond pc oct =
 -- | Convert duration to LilyPond format
 durationToLilyPond :: E.Dur -> LP.Duration
 durationToLilyPond d = LP.Duration (toRational d)
+
+exportToLily :: E.Music E.Pitch -> FilePath -> IO ()
+exportToLily music path = let src = runPrinter $ pretty $ convertToLilyPond music
+                           in writeFile path src
 
 
 -- | Handle control modifications

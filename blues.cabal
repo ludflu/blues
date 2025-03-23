@@ -74,6 +74,7 @@ executable blues
                       ,containers
                       ,split
                       ,lilypond
+                      ,prettify
                     
     -- Directories containing source files.
     hs-source-dirs:   app
