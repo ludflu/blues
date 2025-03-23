@@ -31,13 +31,90 @@ noteToLilyPond d (pc, oct) = let n = LP.NotePitch (pitchToLilyPond pc oct)
 restToLilyPond :: E.Dur -> LP.Music
 restToLilyPond d = LP.Rest (Just $durationToLilyPond d) []
 
+-- For double flat -2, flat -1, natural 0, sharp 1 and double sharp 2.
+
+doubleFlat :: Int
+doubleFlat = -2
+flat = -1
+natural = 0
+doubleSharpsharp = 1
+doubleSharp = 2
+sharp = 1
+
+pitchToLilyAccidental :: E.PitchClass -> LP.Accidental
+pitchToLilyAccidental pc = case pc of
+    E.Cs -> sharp
+    E.Ds -> sharp
+    E.Fs -> sharp
+    E.Gs -> sharp
+    E.As -> sharp
+    E.Bs -> sharp
+    E.Css -> doubleSharp
+    E.Dss -> doubleSharp
+    E.Fss -> doubleSharp
+    E.Gss -> doubleSharp
+    E.Ass -> doubleSharp
+    E.Bss -> doubleSharp
+    E.Cf -> flat
+    E.Df -> flat
+    E.Ef -> flat
+    E.Gf -> flat
+    E.Af -> flat
+    E.Bf -> flat
+    E.Cff -> doubleFlat
+    E.Dff -> doubleFlat
+    E.Eff -> doubleFlat
+    E.Gff -> doubleFlat
+    E.Aff -> doubleFlat
+    E.Bff -> doubleFlat
+    _    -> natural
+
+pitchToLilyPitch :: E.PitchClass -> LP.PitchClass
+pitchToLilyPitch pc = case pc of 
+                        E.C -> LP.C
+                        E.D -> LP.D
+                        E.E -> LP.E
+                        E.F -> LP.F
+                        E.G -> LP.G
+                        E.A -> LP.A
+                        E.B ->  LP.B 
+                        E.Cs -> LP.C
+                        E.Ds -> LP.D
+                        E.Fs -> LP.F
+                        E.Gs -> LP.G
+                        E.As -> LP.A
+                        E.Bs ->  LP.B 
+                        E.Css -> LP.C
+                        E.Dss -> LP.D
+                        E.Fss -> LP.F
+                        E.Gss -> LP.G
+                        E.Ass -> LP.A
+                        E.Bss -> LP.B
+                        E.Cf -> LP.C
+                        E.Df -> LP.D
+                        E.Ef -> LP.E
+                        E.Gf -> LP.G
+                        E.Af -> LP.A
+                        E.Bf -> LP.B
+                        E.Cff -> LP.C
+                        E.Dff -> LP.D
+                        E.Eff -> LP.E
+                        E.Gff -> LP.G
+                        E.Aff -> LP.A
+                        E.Bff -> LP.B
+                        E.Fff -> LP.F
+                        E.Ff -> LP.F
+                        E.Es -> LP.E
+                        E.Ess -> LP.E
+
 -- | Convert a pitch to LilyPond format
 pitchToLilyPond :: E.PitchClass -> E.Octave -> LP.Pitch
 pitchToLilyPond pc oct = 
-    let noteName = case pc of
+    let noteName = pitchToLilyPitch pc
+        accid = pitchToLilyAccidental pc
         -- Adjust octave (Euterpea uses different octave numbering than LilyPond)
         lilyOctave = oct - 4
-    in LP.Pitch noteName Nothing lilyOctave
+    in LP.Pitch (noteName, accid, lilyOctave)
 
 -- | Convert duration to LilyPond format
 durationToLilyPond :: E.Dur -> LP.Duration
