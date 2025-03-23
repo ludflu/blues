@@ -19,7 +19,7 @@ frontAndBack = line $ front ++ drop 1 back
 
 main :: IO ()
 main = do
-  print frontAndBack
-  play frontAndBack
+--   print frontAndBack
+--   play frontAndBack
   exportToLily frontAndBack "output.llp"
 
