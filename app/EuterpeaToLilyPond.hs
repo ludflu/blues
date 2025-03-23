@@ -2,8 +2,6 @@ module EuterpeaToLilyPond (convertToLilyPond) where
 
 import Euterpea qualified as E
 import Music.Lilypond qualified as LP
--- import Data.Ratio ((%))
--- import qualified Data.List as List
 
 -- | Converts Euterpea Music data to LilyPond Music data
 convertToLilyPond :: E.Music E.Pitch -> LP.Music
@@ -15,7 +13,6 @@ musicToLilyPond (E.Prim (E.Note d p)) = noteToLilyPond d p
 musicToLilyPond (E.Prim (E.Rest d)) = restToLilyPond d
 musicToLilyPond (m1 E.:+: m2) = LP.Sequential [musicToLilyPond m1, musicToLilyPond m2]
 musicToLilyPond (m1 E.:=: m2) = LP.simultaneous (musicToLilyPond m1) (musicToLilyPond m2)
--- musicToLilyPond (E.Modify c m) = modifyToLilyPond c (musicToLilyPond m)
 musicToLilyPond (E.Modify c m) = musicToLilyPond m  -- Ignore control modifications for now
 
 -- | Convert a note to LilyPond format
@@ -31,15 +28,21 @@ noteToLilyPond d (pc, oct) = let n = LP.NotePitch (pitchToLilyPond pc oct)
 restToLilyPond :: E.Dur -> LP.Music
 restToLilyPond d = LP.Rest (Just $durationToLilyPond d) []
 
--- For double flat -2, flat -1, natural 0, sharp 1 and double sharp 2.
+
+flat::Int
+flat = -1
 
 doubleFlat :: Int
 doubleFlat = -2
-flat = -1
+
+natural :: Int
 natural = 0
-doubleSharpsharp = 1
-doubleSharp = 2
+
+sharp::Int   
 sharp = 1
+
+doubleSharp :: Int
+doubleSharp = 2
 
 pitchToLilyAccidental :: E.PitchClass -> LP.Accidental
 pitchToLilyAccidental pc = case pc of
@@ -165,23 +168,3 @@ durationToLilyPond d = LP.Duration (toRational d)
 --         in LP.Articulation articulation music
 --     applyAttribute _ music = music  -- Default case for other attributes
 
--- | Convert PitchClass to LilyPond key
--- pitchClassToLilyPondKey :: PitchClass -> LP.Key
--- pitchClassToLilyPondKey pc = case pc of
---     E.C  -> LP.C
---     E.Cs -> LP.Cis
---     E.Df -> LP.Des
---     E.D  -> LP.D
---     E.Ds -> LP.Dis
---     E.Ef -> LP.Ees
---     E.E  -> LP.E
---     E.F  -> LP.F
---     E.Fs -> LP.Fis
---     E.Gf -> LP.Ges
---     E.G  -> LP.G
---     E.Gs -> LP.Gis
---     E.Af -> LP.Aes
---     E.A  -> LP.A
---     E.As -> LP.Ais
---     E.Bf -> LP.Bes
---     E.B  -> LP.B
